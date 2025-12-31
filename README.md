@@ -4,6 +4,7 @@ Este diretório contém um arquivo de configuração para o `tmux`, um terminal 
 
 ## Requisitos
 - O `tmux` deve estar instalado no seu sistema. Caso não tenha, instale via:
+- Python 3 disponível no PATH (macOS e Linux já incluem ou podem instalar via package manager).
 
 ### Linux (Debian/Ubuntu)
 ```bash
@@ -21,7 +22,19 @@ brew install tmux
 ### Windows (WSL ou com tmux instalado)
 Certifique-se de ter o `tmux` instalado no ambiente WSL ou via [Git for Windows](https://git-scm.com/download/win).
 
-## Instruções
+## Instalação (recomendado)
+
+Execute o script de instalação para copiar a configuração e instalar o script de status:
+```bash
+./install.sh
+```
+
+Depois, recarregue o tmux:
+```bash
+tmux source-file ~/.tmux.conf
+```
+
+## Instruções (manual)
 
 1. **Crie um diretório para suas sessões** (opcional, mas recomendado):
    ```bash
@@ -31,13 +44,22 @@ Certifique-se de ter o `tmux` instalado no ambiente WSL ou via [Git for Windows]
 2. **Copia a configuração para o diretório padrão do tmux**:
    Copie o arquivo `.tmux.conf` para o diretório `~/.tmux.conf`: 
    ```bash
-   cp ./tmux.conf ~/.tmux.conf
+   cp ./.tmux.conf ~/.tmux.conf
    ```
 
-3. **Atualize seu shell**:
+3. **Instale o script de status**:
+   ```bash
+   mkdir -p ~/.local/bin
+   cp ./system_status_cli.py ~/.local/bin/system_status
+   chmod +x ~/.local/bin/system_status
+   mkdir -p ~/.local/lib
+   cp -R ./system_status ~/.local/lib/system_status
+   ```
+
+4. **Atualize seu shell**:
    Reinicie o shell atual ou feche e abra um novo terminal.
 
-4. **Carregue a configuração**:
+5. **Carregue a configuração**:
    Execute o comando abaixo para carregar a configuração:
    ```bash
    tmux source-file ~/.tmux.conf && tmux
