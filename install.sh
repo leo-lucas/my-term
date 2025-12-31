@@ -4,16 +4,10 @@ set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 tmux_conf_source="${repo_dir}/.tmux.conf"
-status_script_source="${repo_dir}/system_status_cli.py"
-status_package_source="${repo_dir}/system_status"
 
 tmux_conf_target="${HOME}/.tmux.conf"
-status_script_target="${HOME}/.local/bin/system_status"
-status_package_target="${HOME}/.local/lib/system_status"
 tpm_target="${HOME}/.tmux/plugins/tpm"
 
-mkdir -p "${HOME}/.local/bin"
-mkdir -p "${HOME}/.local/lib"
 mkdir -p "$(dirname "${tpm_target}")"
 
 if [[ -f "${tmux_conf_target}" ]]; then
@@ -23,10 +17,6 @@ if [[ -f "${tmux_conf_target}" ]]; then
 fi
 
 cp "${tmux_conf_source}" "${tmux_conf_target}"
-cp "${status_script_source}" "${status_script_target}"
-rm -rf "${status_package_target}"
-cp -R "${status_package_source}" "${status_package_target}"
-chmod +x "${status_script_target}"
 
 if [[ ! -d "${tpm_target}" ]]; then
   git clone https://github.com/tmux-plugins/tpm "${tpm_target}"
