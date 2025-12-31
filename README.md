@@ -24,7 +24,7 @@ Certifique-se de ter o `tmux` instalado no ambiente WSL ou via [Git for Windows]
 
 ## Instalação (recomendado)
 
-Execute o script de instalação para copiar a configuração e instalar o script de status:
+Execute o script de instalação para copiar a configuração:
 ```bash
 ./install.sh
 ```
@@ -47,19 +47,10 @@ tmux source-file ~/.tmux.conf
    cp ./.tmux.conf ~/.tmux.conf
    ```
 
-3. **Instale o script de status**:
-   ```bash
-   mkdir -p ~/.local/bin
-   cp ./system_status_cli.py ~/.local/bin/system_status
-   chmod +x ~/.local/bin/system_status
-   mkdir -p ~/.local/lib
-   cp -R ./system_status ~/.local/lib/system_status
-   ```
-
-4. **Atualize seu shell**:
+3. **Atualize seu shell**:
    Reinicie o shell atual ou feche e abra um novo terminal.
 
-5. **Carregue a configuração**:
+4. **Carregue a configuração**:
    Execute o comando abaixo para carregar a configuração:
    ```bash
    tmux source-file ~/.tmux.conf && tmux
