@@ -14,6 +14,7 @@ if [[ ! -d "${zsh_dir}" ]]; then
 fi
 
 zsh_custom="${ZSH_CUSTOM:-${zsh_dir}/custom}"
+echo "Usando diretório custom do Oh My Zsh: ${zsh_custom}"
 spaceship_dir="${zsh_custom}/themes/spaceship-prompt"
 
 mkdir -p "${zsh_custom}/themes"
