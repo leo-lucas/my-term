@@ -14,5 +14,6 @@ git clone "$REPO_URL" "$temp_dir/my-term"
 cd "$temp_dir/my-term"
 ./install.sh
 
+rm -rf "$temp_dir/my-term"
 cleanup
 trap - EXIT
