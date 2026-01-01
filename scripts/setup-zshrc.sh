@@ -79,6 +79,42 @@ if [[ -f "${HOME}/.zinit/bin/zinit.zsh" ]]; then
   zinit light zdharma-continuum/fast-syntax-highlighting
   zinit light Aloxaf/fzf-tab
 fi
+
+# NVM
+export NVM_DIR="${HOME}/.nvm"
+if [[ -s "${NVM_DIR}/nvm.sh" ]]; then
+  source "${NVM_DIR}/nvm.sh"
+fi
+
+autoload -U add-zsh-hook
+
+load-nvmrc() {
+  if ! command -v nvm >/dev/null 2>&1; then
+    return
+  fi
+
+  if [[ -f .nvmrc ]]; then
+    local node_version
+    node_version="$(nvm version)"
+    local nvmrc_version
+    nvmrc_version="$(nvm version "$(cat .nvmrc)")"
+
+    if [[ "${nvmrc_version}" == "N/A" ]]; then
+      nvm install
+    elif [[ "${nvmrc_version}" != "${node_version}" ]]; then
+      nvm use
+    fi
+  else
+    local default_version
+    default_version="$(nvm version default)"
+    if [[ "${default_version}" != "N/A" ]]; then
+      nvm use default >/dev/null
+    fi
+  fi
+}
+
+add-zsh-hook chpwd load-nvmrc
+add-zsh-hook precmd load-nvmrc
 # <<< my-term defaults <<<
 ZSHRC
 
