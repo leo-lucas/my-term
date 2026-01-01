@@ -13,55 +13,97 @@ nvm_setup_script="${repo_dir}/scripts/setup-nvm.sh"
 tmux_conf_target="${HOME}/.tmux.conf"
 tpm_target="${HOME}/.tmux/plugins/tpm"
 
-mkdir -p "$(dirname "${tpm_target}")"
+steps=(
+  "Configurar tmux"
+  "Instalar TPM e plugins"
+  "Configurar Zsh"
+  "Instalar Oh My Zsh"
+  "Configurar .zshrc"
+  "Instalar tema Spaceship"
+  "Instalar NVM"
+)
 
-if [[ -f "${tmux_conf_target}" ]]; then
-  backup="${tmux_conf_target}.bak.$(date +%Y%m%d%H%M%S)"
-  cp "${tmux_conf_target}" "${backup}"
-  echo "Backup criado: ${backup}"
-fi
+selected_steps=()
 
-cp "${tmux_conf_source}" "${tmux_conf_target}"
+echo "Selecione os passos para executar (padrão: todos):"
+for index in "${!steps[@]}"; do
+  printf "  %s) %s\n" "$((index + 1))" "${steps[${index}]}"
+done
 
-if [[ ! -d "${tpm_target}" ]]; then
-  git clone https://github.com/tmux-plugins/tpm "${tpm_target}"
-fi
+read -r -p "Informe os números separados por vírgula ou pressione Enter para tudo: " selection
 
-"${HOME}/.tmux/plugins/tpm/bin/install_plugins"
-
-if [[ -x "${zsh_setup_script}" ]]; then
-  "${zsh_setup_script}"
+if [[ -z "${selection}" ]]; then
+  for index in "${!steps[@]}"; do
+    selected_steps+=("$((index + 1))")
+  done
 else
-  echo "Script ${zsh_setup_script} não encontrado ou sem permissão de execução."
-  exit 1
+  selection="${selection// /}"
+  IFS=',' read -r -a selected_steps <<< "${selection}"
 fi
 
-if [[ -x "${oh_my_zsh_setup_script}" ]]; then
-  "${oh_my_zsh_setup_script}"
-else
-  echo "Script ${oh_my_zsh_setup_script} não encontrado ou sem permissão de execução."
-  exit 1
+is_selected() {
+  local target="$1"
+  local item
+
+  for item in "${selected_steps[@]}"; do
+    if [[ "${item}" == "${target}" ]]; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+run_script() {
+  local script_path="$1"
+
+  if [[ -x "${script_path}" ]]; then
+    "${script_path}"
+  else
+    echo "Script ${script_path} não encontrado ou sem permissão de execução."
+    exit 1
+  fi
+}
+
+if is_selected 1; then
+  mkdir -p "$(dirname "${tpm_target}")"
+
+  if [[ -f "${tmux_conf_target}" ]]; then
+    backup="${tmux_conf_target}.bak.$(date +%Y%m%d%H%M%S)"
+    cp "${tmux_conf_target}" "${backup}"
+    echo "Backup criado: ${backup}"
+  fi
+
+  cp "${tmux_conf_source}" "${tmux_conf_target}"
 fi
 
-if [[ -x "${zshrc_setup_script}" ]]; then
-  "${zshrc_setup_script}"
-else
-  echo "Script ${zshrc_setup_script} não encontrado ou sem permissão de execução."
-  exit 1
+if is_selected 2; then
+  mkdir -p "$(dirname "${tpm_target}")"
+
+  if [[ ! -d "${tpm_target}" ]]; then
+    git clone https://github.com/tmux-plugins/tpm "${tpm_target}"
+  fi
+
+  "${HOME}/.tmux/plugins/tpm/bin/install_plugins"
 fi
 
-if [[ -x "${spaceship_setup_script}" ]]; then
-  "${spaceship_setup_script}"
-else
-  echo "Script ${spaceship_setup_script} não encontrado ou sem permissão de execução."
-  exit 1
+if is_selected 3; then
+  run_script "${zsh_setup_script}"
 fi
 
-if [[ -x "${nvm_setup_script}" ]]; then
-  "${nvm_setup_script}"
-else
-  echo "Script ${nvm_setup_script} não encontrado ou sem permissão de execução."
-  exit 1
+if is_selected 4; then
+  run_script "${oh_my_zsh_setup_script}"
+fi
+
+if is_selected 5; then
+  run_script "${zshrc_setup_script}"
+fi
+
+if is_selected 6; then
+  run_script "${spaceship_setup_script}"
+fi
+
+if is_selected 7; then
+  run_script "${nvm_setup_script}"
 fi
 
 echo "Instalação concluída."
