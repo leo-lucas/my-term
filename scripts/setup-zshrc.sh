@@ -57,6 +57,10 @@ SPACESHIP_CHAR_SUFFIX=" "
 # Zinit plugins
 if [[ -f "${HOME}/.zinit/bin/zinit.zsh" ]]; then
   source "${HOME}/.zinit/bin/zinit.zsh"
+  zinit light spaceship-prompt/spaceship-prompt
+  autoload -U promptinit
+  promptinit
+  prompt spaceship
   zinit light zsh-users/zsh-autosuggestions
   zinit light zsh-users/zsh-completions
   zinit light zdharma-continuum/fast-syntax-highlighting
