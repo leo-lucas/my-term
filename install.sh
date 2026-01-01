@@ -4,6 +4,9 @@ set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 tmux_conf_source="${repo_dir}/.tmux.conf"
+zsh_setup_script="${repo_dir}/scripts/setup-zsh.sh"
+oh_my_zsh_setup_script="${repo_dir}/scripts/setup-oh-my-zsh.sh"
+spaceship_setup_script="${repo_dir}/scripts/setup-spaceship.sh"
 
 tmux_conf_target="${HOME}/.tmux.conf"
 tpm_target="${HOME}/.tmux/plugins/tpm"
@@ -23,6 +26,27 @@ if [[ ! -d "${tpm_target}" ]]; then
 fi
 
 "${HOME}/.tmux/plugins/tpm/bin/install_plugins"
+
+if [[ -x "${zsh_setup_script}" ]]; then
+  "${zsh_setup_script}"
+else
+  echo "Script ${zsh_setup_script} não encontrado ou sem permissão de execução."
+  exit 1
+fi
+
+if [[ -x "${oh_my_zsh_setup_script}" ]]; then
+  "${oh_my_zsh_setup_script}"
+else
+  echo "Script ${oh_my_zsh_setup_script} não encontrado ou sem permissão de execução."
+  exit 1
+fi
+
+if [[ -x "${spaceship_setup_script}" ]]; then
+  "${spaceship_setup_script}"
+else
+  echo "Script ${spaceship_setup_script} não encontrado ou sem permissão de execução."
+  exit 1
+fi
 
 echo "Instalação concluída."
 echo "Abra um novo terminal ou recarregue o tmux com:"
