@@ -34,6 +34,8 @@ Depois, recarregue o tmux:
 tmux source-file ~/.tmux.conf
 ```
 
+O script também configura o `zsh`, instala o Oh My Zsh e aplica o tema Spaceship (macOS e Linux). Caso falte algum requisito (como gerenciador de pacotes ou Python 3), ele informará o que precisa ser instalado.
+
 ## Instruções (manual)
 
 1. **Crie um diretório para suas sessões** (opcional, mas recomendado):
