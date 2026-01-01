@@ -6,6 +6,7 @@ repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 tmux_conf_source="${repo_dir}/.tmux.conf"
 zsh_setup_script="${repo_dir}/scripts/setup-zsh.sh"
 oh_my_zsh_setup_script="${repo_dir}/scripts/setup-oh-my-zsh.sh"
+zshrc_setup_script="${repo_dir}/scripts/setup-zshrc.sh"
 spaceship_setup_script="${repo_dir}/scripts/setup-spaceship.sh"
 
 tmux_conf_target="${HOME}/.tmux.conf"
@@ -38,6 +39,13 @@ if [[ -x "${oh_my_zsh_setup_script}" ]]; then
   "${oh_my_zsh_setup_script}"
 else
   echo "Script ${oh_my_zsh_setup_script} não encontrado ou sem permissão de execução."
+  exit 1
+fi
+
+if [[ -x "${zshrc_setup_script}" ]]; then
+  "${zshrc_setup_script}"
+else
+  echo "Script ${zshrc_setup_script} não encontrado ou sem permissão de execução."
   exit 1
 fi
 

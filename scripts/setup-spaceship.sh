@@ -7,6 +7,11 @@ if ! command -v zsh >/dev/null 2>&1; then
   exit 1
 fi
 
+if [[ -f "${HOME}/.zinit/bin/zinit.zsh" ]]; then
+  echo "Zinit encontrado. O tema Spaceship será carregado via Zinit."
+  exit 0
+fi
+
 zsh_dir="${ZSH:-${HOME}/.oh-my-zsh}"
 if [[ ! -d "${zsh_dir}" ]]; then
   echo "Oh My Zsh não encontrado em ${zsh_dir}. Execute scripts/setup-oh-my-zsh.sh primeiro."
