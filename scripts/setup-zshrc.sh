@@ -53,6 +53,19 @@ setopt correct
 SPACESHIP_PROMPT_ADD_NEWLINE=false
 SPACESHIP_CHAR_SYMBOL="❯"
 SPACESHIP_CHAR_SUFFIX=" "
+SPACESHIP_PROMPT_ORDER=(
+  time
+  user
+  dir
+  host
+  git
+  node
+  docker
+  dotnet
+  line_sep
+  char
+)
+SPACESHIP_DOTNET_SHOW=true
 
 # Zinit plugins
 if [[ -f "${HOME}/.zinit/bin/zinit.zsh" ]]; then
