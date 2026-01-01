@@ -25,31 +25,101 @@ steps=(
 
 selected_steps=()
 
-echo "Selecione os passos para executar (padrão: todos marcados):"
-for index in "${!steps[@]}"; do
-  printf "  [%s] %s) %s\n" "x" "$((index + 1))" "${steps[${index}]}"
-done
+render_menu() {
+  local current_index="$1"
+  local index
+  local marker
+  local cursor
 
-read -r -p "Digite os números para DESMARCAR separados por vírgula, ou Enter para manter todos: " deselection
+  tput clear
+  echo "Selecione os passos para executar (padrão: todos marcados):"
+  echo "Use ↑/↓ para navegar, espaço para selecionar/desselecionar, Enter para confirmar."
+  echo ""
 
-for index in "${!steps[@]}"; do
-  selected_steps+=("$((index + 1))")
-done
+  for index in "${!steps[@]}"; do
+    if [[ "${selected_flags[$index]}" -eq 1 ]]; then
+      marker="x"
+    else
+      marker=" "
+    fi
 
-if [[ -n "${deselection}" ]]; then
-  deselection="${deselection// /}"
-  IFS=',' read -r -a deselected_steps <<< "${deselection}"
+    if [[ "${index}" -eq "${current_index}" ]]; then
+      cursor=">"
+    else
+      cursor=" "
+    fi
 
-  for item in "${deselected_steps[@]}"; do
-    for idx in "${!selected_steps[@]}"; do
-      if [[ "${selected_steps[$idx]}" == "${item}" ]]; then
-        unset 'selected_steps[idx]'
-        break
-      fi
-    done
+    printf " %s [%s] %s) %s\n" "${cursor}" "${marker}" "$((index + 1))" "${steps[${index}]}"
   done
-  selected_steps=("${selected_steps[@]}")
-fi
+}
+
+select_steps() {
+  local current_index=0
+  local key
+  local rest
+  local index
+  local stty_state
+
+  selected_flags=()
+  for index in "${!steps[@]}"; do
+    selected_flags[index]=1
+  done
+
+  if [[ ! -t 0 ]]; then
+    for index in "${!steps[@]}"; do
+      selected_steps+=("$((index + 1))")
+    done
+    return 0
+  fi
+
+  stty_state="$(stty -g)"
+  stty -echo
+  tput civis
+
+  cleanup_menu() {
+    stty "${stty_state}"
+    tput cnorm
+    trap - EXIT
+  }
+
+  trap cleanup_menu EXIT
+
+  while true; do
+    render_menu "${current_index}"
+    IFS= read -rsn1 key
+
+    if [[ "${key}" == $'\x1b' ]]; then
+      IFS= read -rsn2 rest || true
+      if [[ "${rest}" == "[A" ]]; then
+        if [[ "${current_index}" -gt 0 ]]; then
+          current_index=$((current_index - 1))
+        fi
+      elif [[ "${rest}" == "[B" ]]; then
+        if [[ "${current_index}" -lt $((${#steps[@]} - 1)) ]]; then
+          current_index=$((current_index + 1))
+        fi
+      fi
+    elif [[ "${key}" == " " ]]; then
+      if [[ "${selected_flags[$current_index]}" -eq 1 ]]; then
+        selected_flags[$current_index]=0
+      else
+        selected_flags[$current_index]=1
+      fi
+    elif [[ "${key}" == "" || "${key}" == $'\n' ]]; then
+      break
+    fi
+  done
+
+  cleanup_menu
+
+  for index in "${!steps[@]}"; do
+    if [[ "${selected_flags[$index]}" -eq 1 ]]; then
+      selected_steps+=("$((index + 1))")
+    fi
+  done
+}
+
+select_steps
 
 is_selected() {
   local target="$1"
