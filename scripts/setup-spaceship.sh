@@ -13,10 +13,10 @@ if [[ ! -d "${zsh_dir}" ]]; then
   exit 1
 fi
 
-themes_dir="${zsh_dir}/themes"
-spaceship_dir="${themes_dir}/spaceship-prompt"
+zsh_custom="${ZSH_CUSTOM:-${zsh_dir}/custom}"
+spaceship_dir="${zsh_custom}/themes/spaceship-prompt"
 
-mkdir -p "${themes_dir}"
+mkdir -p "${zsh_custom}/themes"
 
 if [[ ! -d "${spaceship_dir}" ]]; then
   git clone --depth=1 https://github.com/spaceship-prompt/spaceship-prompt.git "${spaceship_dir}"
@@ -25,7 +25,7 @@ else
   echo "Tema Spaceship já está instalado."
 fi
 
-ln -sf "${spaceship_dir}/spaceship.zsh-theme" "${themes_dir}/spaceship.zsh-theme"
+ln -sf "${spaceship_dir}/spaceship.zsh-theme" "${zsh_custom}/themes/spaceship.zsh-theme"
 
 os_name="$(uname -s)"
 zshrc_path="${HOME}/.zshrc"
