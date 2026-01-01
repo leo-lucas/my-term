@@ -7,11 +7,6 @@ if ! command -v zsh >/dev/null 2>&1; then
   exit 1
 fi
 
-if ! command -v python3 >/dev/null 2>&1; then
-  echo "python3 não encontrado. Instale o Python 3 para continuar."
-  exit 1
-fi
-
 zsh_dir="${ZSH:-${HOME}/.oh-my-zsh}"
 if [[ ! -d "${zsh_dir}" ]]; then
   echo "Oh My Zsh não encontrado em ${zsh_dir}. Execute scripts/setup-oh-my-zsh.sh primeiro."
@@ -32,6 +27,7 @@ fi
 
 ln -sf "${spaceship_dir}/spaceship.zsh-theme" "${zsh_custom}/themes/spaceship.zsh-theme"
 
+os_name="$(uname -s)"
 zshrc_path="${HOME}/.zshrc"
 if [[ -f "${zshrc_path}" ]]; then
   backup="${zshrc_path}.bak.$(date +%Y%m%d%H%M%S)"
@@ -39,23 +35,15 @@ if [[ -f "${zshrc_path}" ]]; then
   echo "Backup do .zshrc criado em: ${backup}"
 fi
 
-python3 - "${zshrc_path}" <<'PY'
-import pathlib
-import re
-import sys
-
-path = pathlib.Path(sys.argv[1])
-content = path.read_text() if path.exists() else ""
-
-line = 'ZSH_THEME="spaceship"'
-if re.search(r"^\s*ZSH_THEME=", content, flags=re.M):
-  content = re.sub(r"^\s*ZSH_THEME=.*$", line, content, flags=re.M)
-else:
-  if content and not content.endswith("\n"):
-    content += "\n"
-  content += f"{line}\n"
-
-path.write_text(content)
-PY
+touch "${zshrc_path}"
+if grep -q "^ZSH_THEME=" "${zshrc_path}"; then
+  if [[ "${os_name}" == "Darwin" ]]; then
+    sed -i '' 's/^ZSH_THEME=.*/ZSH_THEME="spaceship"/' "${zshrc_path}"
+  else
+    sed -i 's/^ZSH_THEME=.*/ZSH_THEME="spaceship"/' "${zshrc_path}"
+  fi
+else
+  echo 'ZSH_THEME="spaceship"' >> "${zshrc_path}"
+fi
 
 echo "Tema Spaceship configurado no .zshrc."
