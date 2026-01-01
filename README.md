@@ -33,7 +33,7 @@ Execute o script de instalação para copiar a configuração:
 
 Copie e cole o comando abaixo para baixar e executar o instalador direto do GitHub:
 ```bash
-curl -fsSL https://raw.githubusercontent.com/leo-lucas/my-term/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/leo-lucas/my-term/main/install-from-github.sh | bash
 ```
 
 Depois, recarregue o tmux:
