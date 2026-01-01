@@ -28,7 +28,10 @@ for i in "${!steps[@]}"; do
   printf "  %d) %s\n" "$((i + 1))" "${steps[$i]}"
 done
 
-read -r -p "Números separados por espaço ou vírgula: " selection
+selection=""
+if [[ -t 0 ]]; then
+  read -r -p "Números separados por espaço ou vírgula: " selection || true
+fi
 selection="${selection//,/ }"
 
 selected_steps=()
