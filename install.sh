@@ -22,6 +22,8 @@ if [[ ! -d "${tpm_target}" ]]; then
   git clone https://github.com/tmux-plugins/tpm "${tpm_target}"
 fi
 
+"${HOME}/.tmux/plugins/tpm/bin/install_plugins"
+
 echo "Instalação concluída."
 echo "Abra um novo terminal ou recarregue o tmux com:"
 echo "tmux source-file ~/.tmux.conf"
