@@ -5,34 +5,58 @@
 
 set -e  # Exit on any error
 
+# Check for command line arguments
+no_config=false
+config_only=false
+
+if [[ $# -gt 0 ]]; then
+  case "$1" in
+    --no-config)
+      no_config=true
+      ;;
+    --config-only)
+      config_only=true
+      ;;
+    *)
+      echo "Uso: $0 [--no-config | --config-only]"
+      exit 1
+      ;;
+  esac
+fi
+
 echo "Starting Neovim installation..."
 
-# Check if Neovim is installed
-if ! command -v nvim &> /dev/null; then
-    echo "Neovim is not installed. Installing..."
-    
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        # macOS
-        if command -v brew &> /dev/null; then
-            brew install neovim
-        else
-            echo "Homebrew not found. Please install Homebrew first: https://brew.sh/"
-            exit 1
-        fi
-    else
-        # Linux
-        if command -v apt &> /dev/null; then
-            sudo apt update
-            sudo apt install -y neovim
-        elif command -v yum &> /dev/null; then
-            sudo yum install -y neovim
-        elif command -v pacman &> /dev/null; then
-            sudo pacman -S neovim
-        else
-            echo "No supported package manager found. Please install Neovim manually."
-            exit 1
-        fi
-    fi
+# If config-only mode, skip installation steps
+if [[ "$config_only" == true ]]; then
+  echo "Modo config-only: Apenas configurando Neovim..."
+else
+  # Check if Neovim is installed
+  if ! command -v nvim &> /dev/null; then
+      echo "Neovim is not installed. Installing..."
+      
+      if [[ "$OSTYPE" == "darwin"* ]]; then
+          # macOS
+          if command -v brew &> /dev/null; then
+              brew install neovim
+          else
+              echo "Homebrew not found. Please install Homebrew first: https://brew.sh/"
+              exit 1
+          fi
+      else
+          # Linux
+          if command -v apt &> /dev/null; then
+              sudo apt update
+              sudo apt install -y neovim
+          elif command -v yum &> /dev/null; then
+              sudo yum install -y neovim
+          elif command -v pacman &> /dev/null; then
+              sudo pacman -S neovim
+          else
+              echo "No supported package manager found. Please install Neovim manually."
+              exit 1
+          fi
+      fi
+  fi
 fi
 
 # Remove existing config if it exists
