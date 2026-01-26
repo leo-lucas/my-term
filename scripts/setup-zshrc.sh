@@ -2,43 +2,66 @@
 
 set -euo pipefail
 
+# Check for command line arguments
+no_config=false
+config_only=false
+
+if [[ $# -gt 0 ]]; then
+  case "$1" in
+    --no-config)
+      no_config=true
+      ;;
+    --config-only)
+      config_only=true
+      ;;
+    *)
+      echo "Uso: $0 [--no-config | --config-only]"
+      exit 1
+      ;;
+  esac
+fi
+
 if ! command -v zsh >/dev/null 2>&1; then
   echo "zsh não encontrado. Execute scripts/setup-zsh.sh primeiro."
   exit 1
 fi
 
-if ! command -v curl >/dev/null 2>&1; then
-  echo "curl não encontrado. Instale o curl para continuar."
-  exit 1
-fi
-
-zshrc_path="${HOME}/.zshrc"
-zinit_dir="${HOME}/.zinit/bin"
-zinit_install_script="https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh"
-
-if [[ ! -d "${zinit_dir}" ]]; then
-  ZINIT_HOME="${HOME}/.zinit" bash -c "$(curl -fsSL "${zinit_install_script}")"
-  echo "Zinit instalado em ${zinit_dir}."
+# If config-only mode, skip installation steps
+if [[ "$config_only" == true ]]; then
+  echo "Modo config-only: Apenas configurando .zshrc..."
 else
-  echo "Zinit já está instalado."
-fi
+  if ! command -v curl >/dev/null 2>&1; then
+    echo "curl não encontrado. Instale o curl para continuar."
+    exit 1
+  fi
 
-touch "${zshrc_path}"
+  zshrc_path="${HOME}/.zshrc"
+  zinit_dir="${HOME}/.zinit/bin"
+  zinit_install_script="https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh"
 
-block_start="# >>> my-term defaults >>>"
-block_end="# <<< my-term defaults <<<"
+  if [[ ! -d "${zinit_dir}" ]]; then
+    ZINIT_HOME="${HOME}/.zinit" bash -c "$(curl -fsSL "${zinit_install_script}")"
+    echo "Zinit instalado em ${zinit_dir}."
+  else
+    echo "Zinit já está instalado."
+  fi
 
-if grep -q "${block_start}" "${zshrc_path}"; then
-  tmp_file="$(mktemp)"
-  awk -v start="${block_start}" -v end="${block_end}" '
-    $0 == start {in_block=1; next}
-    $0 == end {in_block=0; next}
-    !in_block {print}
-  ' "${zshrc_path}" > "${tmp_file}"
-  mv "${tmp_file}" "${zshrc_path}"
-fi
+  touch "${zshrc_path}"
 
-cat <<'ZSHRC' >> "${zshrc_path}"
+  block_start="# >>> my-term defaults >>>"
+  block_end="# <<< my-term defaults <<<"
+
+  if grep -q "${block_start}" "${zshrc_path}"; then
+    tmp_file="$(mktemp)"
+    awk -v start="${block_start}" -v end="${block_end}" '
+      $0 == start {in_block=1; next}
+      $0 == end {in_block=0; next}
+      !in_block {print}
+    ' "${zshrc_path}" > "${tmp_file}"
+    mv "${tmp_file}" "${zshrc_path}"
+  fi
+
+  cat <<'ZSHRC' >> "${zshrc_path}"
 # >>> my-term defaults >>>
 # Histórico e autocorreção
 HISTSIZE=50000
@@ -118,4 +141,5 @@ add-zsh-hook precmd load-nvmrc
 # <<< my-term defaults <<<
 ZSHRC
 
-echo "Configurações padrão adicionadas ao .zshrc."
+  echo "Configurações padrão adicionadas ao .zshrc."
+fi
