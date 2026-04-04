@@ -41,6 +41,29 @@ Depois, recarregue o tmux:
 tmux source-file ~/.tmux.conf
 ```
 
+## Instalação do Neovim
+
+O script de instalação também inclui a instalação do Neovim com sua configuração personalizada. O script irá:
+- Instalar o Neovim (se não estiver instalado)
+- Substituir a configuração existente em ~/.config/nvim
+- Clonar a configuração do repositório https://github.com/leo-lucas/my-nvim
+- Instalar os plugins automaticamente
+
+## Instalação do OpenCode
+
+O script de instalação também inclui a instalação do OpenCode com sua configuração personalizada. O script irá:
+- Instalar o OpenCode via npm (se não estiver instalado)
+- Substituir a configuração existente em ~/.config/opencode
+- Clonar a configuração do repositório https://github.com/leo-lucas/my-opencode
+- Instalar as dependências automaticamente
+
+## Instalação via curl
+
+Você também pode instalar o OpenCode diretamente via curl:
+```bash
+curl -fsSL https://opencode.ai/install | bash
+```
+
 O script também configura o `zsh`, instala o Oh My Zsh e aplica o tema Spaceship (macOS e Linux). Caso falte algum requisito (como gerenciador de pacotes ou Python 3), ele informará o que precisa ser instalado.
 
 ## Instruções (manual)
