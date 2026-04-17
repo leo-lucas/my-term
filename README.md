@@ -24,10 +24,18 @@ Certifique-se de ter o `tmux` instalado no ambiente WSL ou via [Git for Windows]
 
 ## Instalação (recomendado)
 
-Execute o script de instalação para copiar a configuração:
+Execute o script de instalação para configurar tudo automaticamente:
 ```bash
 ./install.sh
 ```
+
+Isso instala e configura:
+- Tmux com TPM e plugins
+- Zsh com Oh My Zsh e tema Spaceship
+- Zsh com plugins (zinit, autosuggestions, fzf-tab, fast-syntax-highlighting)
+- NVM para gerenciamento de versões Node.js
+- Neovim com configuração personalizada
+- OpenCode CLI
 
 ## Instalação sem clonar o repositório
 

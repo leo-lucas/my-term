@@ -3,48 +3,19 @@
 # OpenCode Installation Script
 # This script installs OpenCode configuration on macOS and Linux
 
-set -e  # Exit on any error
+set -euo pipefail
 
-# Set default config directory
 CONFIG_DIR="$HOME/.config/opencode"
-
-# Check for command line arguments
-no_config=false
-config_only=false
-
-if [[ $# -gt 0 ]]; then
-  case "$1" in
-    --no-config)
-      no_config=true
-      ;;
-    --config-only)
-      config_only=true
-      ;;
-    *)
-      echo "Uso: $0 [--no-config | --config-only]"
-      exit 1
-      ;;
-  esac
-fi
 
 echo "Starting OpenCode installation..."
 
-# If config-only mode, skip installation steps
-if [[ "$config_only" == true ]]; then
-  echo "Modo config-only: Apenas configurando OpenCode..."
-else
-  # Check if OpenCode is installed
+# Check if OpenCode is installed
+if ! command -v opencode &> /dev/null; then
+  echo "OpenCode is not installed. Installing via npm..."
+  npm install -g opencode-ai
   if ! command -v opencode &> /dev/null; then
-      echo "OpenCode is not installed. Installing via npm..."
-      
-      # Install via npm
-      npm install -g opencode-ai
-      
-      # Verify installation
-      if ! command -v opencode &> /dev/null; then
-          echo "Failed to install OpenCode via npm"
-          exit 1
-      fi
+    echo "Failed to install OpenCode via npm"
+    exit 1
   fi
 fi
 
