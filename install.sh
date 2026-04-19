@@ -23,6 +23,7 @@ fi
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 tmux_conf_source="${repo_dir}/.tmux.conf"
+tmux_setup_script="${repo_dir}/scripts/setup-tmux.sh"
 zsh_setup_script="${repo_dir}/scripts/setup-zsh.sh"
 oh_my_zsh_setup_script="${repo_dir}/scripts/setup-oh-my-zsh.sh"
 zshrc_setup_script="${repo_dir}/scripts/setup-zshrc.sh"
@@ -49,8 +50,8 @@ steps=(
 
 # Define all installation steps with their corresponding scripts
 step_scripts=(
-  "${repo_dir}/install.sh"
-  "${repo_dir}/install.sh"
+  "${tmux_setup_script}"
+  "${tmux_setup_script}"
   "${zsh_setup_script}"
   "${oh_my_zsh_setup_script}"
   "${zshrc_setup_script}"
@@ -67,7 +68,7 @@ done
 
 selection=""
 if [[ -t 0 ]]; then
-  read -r -p "Números separados por espaço ou vírgula: " selection || true
+  read -r -p "Números separados por espaço ou vírgula: " selection
 fi
 selection="${selection//,/ }"
 
@@ -107,24 +108,20 @@ run_step() {
   case "${step_number}" in
     1)
       # Install tmux
-      if [[ "$no_config" == false ]]; then
-        mkdir -p "$(dirname "${tpm_target}")"
-        if [[ -f "${tmux_conf_target}" ]]; then
-          backup="${tmux_conf_target}.bak.$(date +%Y%m%d%H%M%S)"
-          cp "${tmux_conf_target}" "${backup}"
-          echo "Backup criado: ${backup}"
-        fi
-        cp "${tmux_conf_source}" "${tmux_conf_target}"
+      if [[ -x "${tmux_setup_script}" ]]; then
+        "${tmux_setup_script}"
+      else
+        echo "Script ${tmux_setup_script} não encontrado ou sem permissão de execução."
+        exit 1
       fi
       ;;
     2)
       # Install TPM and plugins
-      if [[ "$no_config" == false ]]; then
-        mkdir -p "$(dirname "${tpm_target}")"
-        if [[ ! -d "${tpm_target}" ]]; then
-          git clone https://github.com/tmux-plugins/tpm "${tpm_target}"
-        fi
-        "${HOME}/.tmux/plugins/tpm/bin/install_plugins"
+      if [[ -x "${tmux_setup_script}" ]]; then
+        "${tmux_setup_script}"
+      else
+        echo "Script ${tmux_setup_script} não encontrado ou sem permissão de execução."
+        exit 1
       fi
       ;;
     3)

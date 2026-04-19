@@ -63,6 +63,9 @@ fi
 CONFIG_DIR="$HOME/.config/nvim"
 if [ -d "$CONFIG_DIR" ]; then
     echo "Removing existing Neovim configuration..."
+    backup="${CONFIG_DIR}.bak.$(date +%Y%m%d%H%M%S)"
+    cp -r "$CONFIG_DIR" "${backup}"
+    echo "Backup criado: ${backup}"
     rm -rf "$CONFIG_DIR"
 fi
 

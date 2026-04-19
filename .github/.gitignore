@@ -1,0 +1,6 @@
+# GitHub Actions workflow files
+*.yml
+*.yaml
+
+# GitHub issue and PR templates
+.github/
