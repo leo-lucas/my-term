@@ -52,6 +52,11 @@ fi
 if [[ -d "$CONFIG_DIR" ]]; then
   echo "OpenCode configuration already exists. Updating..."
   cd "$CONFIG_DIR"
+  current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+  if [[ "$current_branch" != "main" ]]; then
+    echo "Switching to main branch..."
+    git checkout main
+  fi
   git pull origin main
 else
   # Clone the configuration

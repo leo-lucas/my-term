@@ -1,0 +1,5 @@
+# Testes
+*.log
+*.tmp
+.tmp-*
+test-results/
