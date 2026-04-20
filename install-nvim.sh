@@ -75,7 +75,7 @@ git clone https://github.com/leo-lucas/my-nvim.git "$CONFIG_DIR"
 
 # Install plugins
 echo "Installing plugins..."
-nvim -c 'autocmd VimEnter * PlugInstall | qall'
+nvim --headless -c 'lua require("lazy").install()' -c 'qall'
 
 echo "Neovim installation completed successfully!"
 echo "You can now start Neovim with: nvim"

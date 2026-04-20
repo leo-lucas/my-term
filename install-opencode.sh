@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # OpenCode Installation Script
 # This script installs OpenCode configuration on macOS and Linux
 
-set -e  # Exit on any error
+set -euo pipefail
 
 # Set default config directory
 CONFIG_DIR="$HOME/.config/opencode"
@@ -55,12 +55,17 @@ if [[ -d "$CONFIG_DIR" ]]; then
   current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
   if [[ "$current_branch" != "main" ]]; then
     echo "Switching to main branch..."
+    echo "Nota: Este comando pode solicitar sua senha SSH se autenticacao for necessaria."
     git checkout main
   fi
+  echo "Nota: Este comando pode solicitar sua senha SSH se autenticacao for necessaria."
   git pull origin main
 else
   # Clone the configuration
   echo "Cloning OpenCode configuration from GitHub..."
+  echo "Nota: Este comando pode solicitar sua senha SSH ou do GitHub."
+  echo "     Se estiver usando chave SSH, ela será usada automaticamente."
+  echo "     Se estiver usando senha do GitHub, insira sua senha (não sua chave SSH)."
   git clone https://github.com/leo-lucas/my-opencode.git "$CONFIG_DIR"
 fi
 
