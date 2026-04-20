@@ -55,15 +55,10 @@ if [[ -d "$CONFIG_DIR" ]]; then
   current_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
   if [[ "$current_branch" != "main" ]]; then
     echo "Switching to main branch..."
-<<<<<<< HEAD
-    git checkout main
-  fi
-=======
     echo "Nota: Este comando pode solicitar sua senha SSH se autenticacao for necessaria."
     git checkout main
   fi
   echo "Nota: Este comando pode solicitar sua senha SSH se autenticacao for necessaria."
->>>>>>> feat/improve-qa
   git pull origin main
 else
   # Clone the configuration
