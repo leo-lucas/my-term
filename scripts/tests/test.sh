@@ -99,6 +99,83 @@ for script in setup-zsh.sh setup-oh-my-zsh.sh setup-spaceship.sh setup-zshrc.sh 
     echo ""
 done
 
+# Testes específicos do install-opencode.sh
+echo "=== install-opencode.sh ==="
+
+if [[ -f "${TEST_DIR}/../install-opencode.sh" ]]; then
+    echo "✓ PASS: install-opencode.sh existe"
+    PASSED=$((PASSED + 1))
+else
+    echo "✗ FAIL: install-opencode.sh não encontrado"
+    FAILED=$((FAILED + 1))
+fi
+
+# Teste: Sintaxe válida
+if bash -n "${TEST_DIR}/../install-opencode.sh" 2>/dev/null; then
+    echo "✓ PASS: install-opencode.sh - sintaxe válida"
+    PASSED=$((PASSED + 1))
+else
+    echo "✗ FAIL: install-opencode.sh - erro de sintaxe"
+    FAILED=$((FAILED + 1))
+fi
+
+# Teste: Shebang correto
+first_line=$(head -n1 "${TEST_DIR}/../install-opencode.sh")
+if [[ "$first_line" == "#!/usr/bin/env bash" ]]; then
+    echo "✓ PASS: install-opencode.sh - shebang correto"
+    PASSED=$((PASSED + 1))
+else
+    echo "✗ FAIL: install-opencode.sh - shebang incorreto: ${first_line}"
+    FAILED=$((FAILED + 1))
+fi
+
+# Teste: pipefail habilitado
+if grep -q "set -euo pipefail" "${TEST_DIR}/../install-opencode.sh"; then
+    echo "✓ PASS: install-opencode.sh - pipefail habilitado"
+    PASSED=$((PASSED + 1))
+else
+    echo "✗ FAIL: install-opencode.sh - pipefail não habilitado"
+    FAILED=$((FAILED + 1))
+fi
+
+# Teste: Argumentos suportados
+if grep -q -- '--no-config' "${TEST_DIR}/../install-opencode.sh" && grep -q -- '--config-only' "${TEST_DIR}/../install-opencode.sh"; then
+    echo "✓ PASS: install-opencode.sh - suporta --no-config e --config-only"
+    PASSED=$((PASSED + 1))
+else
+    echo "✗ FAIL: install-opencode.sh - não suporta argumentos corretamente"
+    FAILED=$((FAILED + 1))
+fi
+
+# Teste: Mensagem de aviso SSH antes do git clone
+if grep -q -i "senha SSH\|SSH.*senha\|Nota.*SSH" "${TEST_DIR}/../install-opencode.sh"; then
+    echo "✓ PASS: install-opencode.sh - mensagem de aviso SSH presente"
+    PASSED=$((PASSED + 1))
+else
+    echo "✗ FAIL: install-opencode.sh - mensagem de aviso SSH não encontrada"
+    FAILED=$((FAILED + 1))
+fi
+
+# Teste: Mensagem específica para git clone
+if grep -B3 "git clone" "${TEST_DIR}/../install-opencode.sh" | grep -q -i "senha\|ssh"; then
+    echo "✓ PASS: install-opencode.sh - mensagem explicativa antes do git clone"
+    PASSED=$((PASSED + 1))
+else
+    echo "✗ FAIL: install-opencode.sh - mensagem explicativa antes do git clone não encontrada"
+    FAILED=$((FAILED + 1))
+fi
+
+# Teste: Mensagem específica para git pull
+if grep -B3 "git pull" "${TEST_DIR}/../install-opencode.sh" | grep -q -i "senha\|ssh"; then
+    echo "✓ PASS: install-opencode.sh - mensagem explicativa antes do git pull"
+    PASSED=$((PASSED + 1))
+else
+    echo "✗ FAIL: install-opencode.sh - mensagem explicativa antes do git pull não encontrada"
+    FAILED=$((FAILED + 1))
+fi
+
+echo ""
+
 # Testes específicos do install.sh
    echo "=== install.sh ==="
 if [[ -f "${TEST_DIR}/../install.sh" ]]; then
@@ -116,6 +193,27 @@ else
     echo "✗ FAIL: install.sh não referencia setup-zsh.sh"
     FAILED=$((FAILED + 1))
 fi
+
+# Teste: Verifica variável CI para entrada interativa
+if grep -q 'CI' "${TEST_DIR}/../install.sh"; then
+    echo "✓ PASS: install.sh verifica variável CI"
+    PASSED=$((PASSED + 1))
+else
+    echo "✗ FAIL: install.sh não verifica variável CI"
+    FAILED=$((FAILED + 1))
+fi
+
+# Teste funcional: Validar comportamento com CI
+    if [[ -f "${TEST_DIR}/test-ci-functional.sh" ]]; then
+        echo "Testando comportamento funcional com CI..."
+        if bash "${TEST_DIR}/test-ci-functional.sh" 2>/dev/null; then
+            echo "✓ PASS: Teste funcional CI passou"
+            PASSED=$((PASSED + 1))
+        else
+            echo "✗ FAIL: Teste funcional CI falhou"
+            FAILED=$((FAILED + 1))
+        fi
+    fi
 
 echo ""
 echo "========================================"

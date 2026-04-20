@@ -61,22 +61,24 @@ step_scripts=(
   "${opencode_setup_script}"
 )
 
-echo "Selecione os passos da instalação (pressione Enter para todos):"
-for i in "${!steps[@]}"; do
-  printf "  %d) %s\n" "$((i + 1))" "${steps[$i]}"
-done
+# Ask user for selection only if CI environment variable is not set
+if [[ -z "${CI:-}" ]]; then
+  echo "Selecione os passos da instalação (pressione Enter para todos):"
+  for i in "${!steps[@]}"; do
+    printf "  %d) %s\n" "$((i + 1))" "${steps[$i]}"
+  done
 
-selection=""
-if [[ -t 0 ]]; then
+  selection=""
   read -r -p "Números separados por espaço ou vírgula: " selection
+else
+  # CI mode: select all steps automatically
+  selection=""
 fi
 selection="${selection//,/ }"
 
 # If --no-config is used, only install software without configuration
 if [[ "$no_config" == true ]]; then
-  # In --no-config mode, we execute all steps but the configuration steps are skipped
-  # This is handled in each step's logic, so we select all steps but step execution
-  # will skip configuration steps when --no-config is active
+  # In --no-config mode, select all steps but skip configuration step execution
   selected_steps=(1 2 3 4 5 6 7 8 9)
   echo "Modo: Instalação sem configurações"
 elif [[ "$config_only" == true ]]; then
