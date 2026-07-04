@@ -72,7 +72,7 @@ echo "tmux instalado com sucesso."
 
 # Configuração do tmux.conf
 if [[ "$no_config" == false ]]; then
-  repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
   tmux_conf_source="${repo_dir}/.tmux.conf"
   tmux_conf_target="${HOME}/.tmux.conf"
 
